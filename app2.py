@@ -194,7 +194,15 @@ elif selected_rarity == "5★":
 st.subheader(f"Characters with {selected_vision} Vision and {selected_weapon}")
 
 # Show filtered data
-st.dataframe(filtered_genshin[["character_name", "star_rarity", "region", "birthday"]])
+# Modify the displayed columns based on the checkbox selection
+columns_to_show = ["character_name", "star_rarity", "region"]
+
+if st.sidebar.checkbox("Show Character Birthdays"):
+    columns_to_show.append("birthday")  # Add 'birthday' column if checkbox is checked
+
+st.subheader(f"Characters with {selected_vision} Vision and {selected_weapon}")
+st.dataframe(filtered_genshin[columns_to_show])  # Show table with selected columns
+
 
 # Bar Chart: Number of Characters by Region
 st.subheader("Distribution of Characters by Region")

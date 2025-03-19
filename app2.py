@@ -183,10 +183,13 @@ selected_rarity = st.sidebar.radio("Select Star Rarity", ["All", "4★", "5★"]
 # Filter dataset based on selections
 filtered_genshin = genshin[(genshin["vision"] == selected_vision) & (genshin["weapon_type"] == selected_weapon)]
 
+genshin['star_rarity'] = genshin['star_rarity'].astype(str)  # Convert to string if needed
+
 if selected_rarity == "4★":
-    filtered_genshin = filtered_genshin[filtered_genshin["star_rarity"] == 4]
+    filtered_genshin = filtered_genshin[filtered_genshin["star_rarity"] == "4"]
 elif selected_rarity == "5★":
-    filtered_genshin = filtered_genshin[filtered_genshin["star_rarity"] == 5]
+    filtered_genshin = filtered_genshin[filtered_genshin["star_rarity"] == "5"]
+
 
 st.subheader(f"Characters with {selected_vision} Vision and {selected_weapon}")
 

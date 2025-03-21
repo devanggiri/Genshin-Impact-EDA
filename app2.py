@@ -171,6 +171,12 @@ else:
     st.write(f"No characters found for {selected_vision}. Try another element!")
 
 # New Section: Interactive Filters for Character Insights
+# Ensure correct data types
+genshin["vision"] = genshin["vision"].astype(str)
+genshin["weapon_type"] = genshin["weapon_type"].astype(str)
+genshin["star_rarity"] = genshin["star_rarity"].astype(str)  # Convert to string
+
+# New Section: Interactive Filters for Character Insights
 st.sidebar.header("Filter Characters")
 
 # Dropdown filters for Vision and Weapon Type
@@ -181,28 +187,31 @@ selected_weapon = st.sidebar.selectbox("Select Weapon Type", genshin["weapon_typ
 selected_rarity = st.sidebar.radio("Select Star Rarity", ["All", "4★", "5★"])
 
 # Filter dataset based on selections
-filtered_genshin = genshin[(genshin["vision"] == selected_vision) & (genshin["weapon_type"] == selected_weapon)]
-
-genshin['star_rarity'] = genshin['star_rarity'].astype(str)  # Convert to string if needed
+filtered_genshin = genshin[
+    (genshin["vision"] == selected_vision) & (genshin["weapon_type"] == selected_weapon)
+]
 
 if selected_rarity == "4★":
     filtered_genshin = filtered_genshin[filtered_genshin["star_rarity"] == "4"]
 elif selected_rarity == "5★":
     filtered_genshin = filtered_genshin[filtered_genshin["star_rarity"] == "5"]
 
+# Reset index after filtering
+filtered_genshin = filtered_genshin.reset_index(drop=True)
 
-st.subheader(f"Characters with {selected_vision} Vision and {selected_weapon}")
+# Debugging Outputs
+st.write("Selected Vision:", selected_vision)
+st.write("Selected Weapon:", selected_weapon)
+
 
 # Show filtered data
-# Modify the displayed columns based on the checkbox selection
 columns_to_show = ["character_name", "star_rarity", "region"]
 
-if st.sidebar.checkbox("Show Character Birthdays"):
-    columns_to_show.append("birthday")  # Add 'birthday' column if checkbox is checked
+if st.sidebar.checkbox("Show Character Birthdays", key="show_birthdays"):
+    columns_to_show.append("birthday")  # Add 'birthday' column if checked
 
 st.subheader(f"Characters with {selected_vision} Vision and {selected_weapon}")
-st.dataframe(filtered_genshin[columns_to_show])  # Show table with selected columns
-
+st.dataframe(filtered_genshin[columns_to_show])  # Show updated table
 
 # Bar Chart: Number of Characters by Region
 st.subheader("Distribution of Characters by Region")
@@ -243,9 +252,5 @@ ax.set_ylabel("Count")
 ax.set_title(f"Top 5 Ascension Boss Materials for {selected_vision} & {selected_weapon}")
 st.pyplot(fig)
 
-# Checkbox: Show Character Birthdays
-if st.sidebar.checkbox("Show Character Birthdays"):
-    st.subheader("Character Birthdays")
-    st.write(filtered_genshin[["character_name", "birthday"]])
-
+# Success message
 st.success("✅ Explore different characters by changing the filters in the sidebar!")
